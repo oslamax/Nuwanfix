@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="si">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NuwanFix — Phone Repair & Shop</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@300;400;600;700&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --lime: #C8F135;
+    --black: #0a0a0a;
+    --dark: #111111;
+    --mid: #1a1a1a;
+    --white: #f5f5f0;
+    --grey: #888;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: 'Barlow', sans-serif;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* Custom cursor */
+  .cursor {
+    width: 12px; height: 12px;
+    background: var(--lime);
+    border-radius: 50%;
+    position: fixed;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: transform 0.1s, width 0.2s, height 0.2s;
+    mix-blend-mode: difference;
+  }
+  .cursor-ring {
+    width: 36px; height: 36px;
+    border: 1.5px solid var(--lime);
+    border-radius: 50%;
+    position: fixed;
+    pointer-events: none;
+    z-index: 9998;
+    transform: translate(-50%, -50%);
+    transition: all 0.15s ease;
+    mix-blend-mode: difference;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 24px 48px;
+    mix-blend-mode: difference;
+  }
+  .nav-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    letter-spacing: 4px;
+    color: var(--white);
+    text-decoration: none;
+  }
+  .nav-logo span { color: var(--lime); }
+  .nav-links { display: flex; gap: 36px; list-style: none; }
+  .nav-links a {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--white);
+    text-decoration: none;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+  }
+  .nav-links a:hover { opacity: 1; }
+
+  /* HERO */
+  .hero {
+    height: 100vh;
+    position: relative;
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+    background: var(--black);
+  }
+  .hero-bg-text {
+    position: absolute;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(120px, 20vw, 280px);
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(255,255,255,0.06);
+    white-space: nowrap;
+    user-select: none;
+    animation: slideBg 20s linear infinite;
+    top: 50%; transform: translateY(-50%);
+    left: -100px;
+  }
+  @keyframes slideBg {
+    0% { transform: translateY(-50%) translateX(0); }
+    100% { transform: translateY(-50%) translateX(-50%); }
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+  }
+
+  .hero-tag {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--lime);
+    margin-bottom: 24px;
+    animation: fadeUp 1s 0.2s both;
+  }
+
+  .hero-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(80px, 14vw, 200px);
+    line-height: 0.9;
+    color: var(--white);
+    animation: fadeUp 1s 0.4s both;
+  }
+  .hero-title .lime { color: var(--lime); }
+
+  .hero-sub {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: clamp(18px, 2.5vw, 28px);
+    font-weight: 300;
+    letter-spacing: 6px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.5);
+    margin-top: 16px;
+    animation: fadeUp 1s 0.6s both;
+  }
+
+  .hero-cta {
+    margin-top: 56px;
+    display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;
+    animation: fadeUp 1s 0.8s both;
+  }
+  .btn-primary {
+    background: var(--lime);
+    color: var(--black);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    padding: 16px 40px;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .btn-primary:hover { background: var(--white); transform: translateY(-2px); }
+  .btn-outline {
+    border: 1px solid rgba(255,255,255,0.3);
+    color: var(--white);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    padding: 16px 40px;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .btn-outline:hover { border-color: var(--lime); color: var(--lime); }
+
+  .hero-scroll {
+    position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%);
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+    animation: fadeUp 1s 1.2s both;
+  }
+  .scroll-line {
+    width: 1px; height: 60px;
+    background: linear-gradient(to bottom, transparent, var(--lime));
+    animation: scrollPulse 2s ease-in-out infinite;
+  }
+  @keyframes scrollPulse {
+    0%, 100% { opacity: 0.3; transform: scaleY(1); }
+    50% { opacity: 1; transform: scaleY(1.2); }
+  }
+  .scroll-text {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--grey);
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* TICKER */
+  .ticker {
+    background: var(--lime);
+    padding: 14px 0;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+  .ticker-track {
+    display: inline-flex; gap: 0;
+    animation: ticker 18s linear infinite;
+  }
+  .ticker-item {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 18px;
+    letter-spacing: 3px;
+    color: var(--black);
+    padding: 0 32px;
+  }
+  .ticker-dot { color: rgba(0,0,0,0.4); }
+  @keyframes ticker {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+
+  /* SERVICES */
+  .section { padding: 120px 48px; }
+  .section-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--lime);
+    margin-bottom: 20px;
+  }
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(60px, 8vw, 110px);
+    line-height: 0.9;
+    color: var(--white);
+    margin-bottom: 60px;
+  }
+  .section-title .outline {
+    color: transparent;
+    -webkit-text-stroke: 1.5px var(--white);
+  }
+
+  .services-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2px;
+    margin-top: 60px;
+  }
+  .service-card {
+    background: var(--mid);
+    padding: 48px 36px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s;
+    cursor: none;
+  }
+  .service-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0;
+    width: 0; height: 2px;
+    background: var(--lime);
+    transition: width 0.4s ease;
+  }
+  .service-card:hover::before { width: 100%; }
+  .service-card:hover { background: #1e1e1e; transform: translateY(-4px); }
+
+  .service-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 48px;
+    color: rgba(200, 241, 53, 0.15);
+    line-height: 1;
+    margin-bottom: 20px;
+  }
+  .service-icon {
+    font-size: 32px;
+    margin-bottom: 20px;
+  }
+  .service-name {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--white);
+    margin-bottom: 12px;
+  }
+  .service-desc {
+    font-size: 14px;
+    font-weight: 300;
+    color: var(--grey);
+    line-height: 1.7;
+  }
+  .service-price {
+    margin-top: 24px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    color: var(--lime);
+    letter-spacing: 1px;
+  }
+
+  /* STATS */
+  .stats {
+    background: var(--lime);
+    padding: 80px 48px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2px;
+  }
+  .stat-item {
+    background: var(--lime);
+    text-align: center;
+    padding: 40px 20px;
+  }
+  .stat-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(60px, 8vw, 100px);
+    color: var(--black);
+    line-height: 1;
+  }
+  .stat-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: rgba(0,0,0,0.6);
+    margin-top: 8px;
+  }
+
+  /* PRODUCTS */
+  .products-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+    margin-top: 60px;
+  }
+  .product-card {
+    background: var(--mid);
+    aspect-ratio: 3/4;
+    position: relative;
+    overflow: hidden;
+    cursor: none;
+    transition: all 0.3s;
+  }
+  .product-bg {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 100px;
+    transition: transform 0.6s ease;
+  }
+  .product-card:hover .product-bg { transform: scale(1.1) rotate(3deg); }
+
+  .product-info {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    padding: 32px 28px;
+    background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+    transform: translateY(20px);
+    transition: transform 0.3s;
+  }
+  .product-card:hover .product-info { transform: translateY(0); }
+
+  .product-category {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--lime);
+    margin-bottom: 8px;
+  }
+  .product-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 32px;
+    color: var(--white);
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+  .product-price {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--grey);
+  }
+
+  /* WHY US */
+  .why-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+    margin-top: 60px;
+  }
+  .why-left .big-quote {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(28px, 4vw, 48px);
+    line-height: 1.1;
+    color: var(--white);
+    margin-bottom: 32px;
+  }
+  .why-left .big-quote .accent { color: var(--lime); }
+  .why-left p {
+    font-size: 15px;
+    font-weight: 300;
+    color: var(--grey);
+    line-height: 1.8;
+    max-width: 480px;
+  }
+  .why-features { display: flex; flex-direction: column; gap: 2px; }
+  .feature-row {
+    background: var(--mid);
+    padding: 28px 32px;
+    display: flex; align-items: center; gap: 20px;
+    transition: background 0.2s;
+    cursor: none;
+  }
+  .feature-row:hover { background: #222; }
+  .feature-icon { font-size: 28px; flex-shrink: 0; }
+  .feature-text-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--white);
+    margin-bottom: 4px;
+  }
+  .feature-text-desc {
+    font-size: 13px;
+    color: var(--grey);
+    font-weight: 300;
+  }
+
+  /* CONTACT */
+  .contact-section {
+    padding: 120px 48px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .contact-bg-num {
+    position: absolute;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(200px, 30vw, 400px);
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(200, 241, 53, 0.07);
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    user-select: none;
+    white-space: nowrap;
+  }
+  .contact-section .section-label,
+  .contact-section .section-title { position: relative; z-index: 1; }
+  .contact-details {
+    position: relative; z-index: 1;
+    display: flex; justify-content: center; gap: 80px; flex-wrap: wrap;
+    margin-top: 60px;
+  }
+  .contact-item { text-align: center; }
+  .contact-item-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--lime);
+    margin-bottom: 12px;
+  }
+  .contact-item-value {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    letter-spacing: 2px;
+    color: var(--white);
+  }
+  .contact-item-sub {
+    font-size: 13px;
+    color: var(--grey);
+    font-weight: 300;
+    margin-top: 4px;
+  }
+
+  /* FOOTER */
+  footer {
+    background: var(--mid);
+    padding: 48px;
+    display: flex; justify-content: space-between; align-items: center;
+    flex-wrap: wrap; gap: 24px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+  .footer-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 32px;
+    letter-spacing: 4px;
+    color: var(--white);
+  }
+  .footer-logo span { color: var(--lime); }
+  .footer-copy {
+    font-size: 12px;
+    color: var(--grey);
+    letter-spacing: 1px;
+  }
+  .footer-socials { display: flex; gap: 24px; }
+  .footer-socials a {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--grey);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .footer-socials a:hover { color: var(--lime); }
+
+  /* Mobile */
+  @media (max-width: 768px) {
+    nav { padding: 20px 24px; }
+    .nav-links { display: none; }
+    .section { padding: 80px 24px; }
+    .stats { grid-template-columns: repeat(2, 1fr); }
+    .products-grid { grid-template-columns: 1fr 1fr; }
+    .why-grid { grid-template-columns: 1fr; gap: 40px; }
+    footer { padding: 32px 24px; flex-direction: column; text-align: center; }
+    .contact-details { gap: 40px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">Nuwan<span>Fix</span></a>
+  <ul class="nav-links">
+    <li><a href="#services">Repairs</a></li>
+    <li><a href="#products">Products</a></li>
+    <li><a href="#why">About</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg-text">NUWANFIX NUWANFIX NUWANFIX NUWANFIX NUWANFIX NUWANFIX</div>
+  <div class="hero-content">
+    <p class="hero-tag">Sri Lanka's #1 Phone Repair & Shop</p>
+    <h1 class="hero-title">NUWAN<br><span class="lime">FIX</span></h1>
+    <p class="hero-sub">Phone Repairs · Sales · Accessories</p>
+    <div class="hero-cta">
+      <a href="#services" class="btn-primary">Our Services</a>
+      <a href="#contact" class="btn-outline">Book a Repair</a>
+    </div>
+  </div>
+  <div class="hero-scroll">
+    <div class="scroll-line"></div>
+    <span class="scroll-text">Scroll</span>
+  </div>
+</section>
+
+<!-- TICKER -->
+<div class="ticker">
+  <div class="ticker-track">
+    <span class="ticker-item">Screen Repair <span class="ticker-dot">✦</span></span>
+    <span class="ticker-item">Battery Replace <span class="ticker-dot">✦</span></span>
+    <span class="ticker-item">Water Damage Fix <span class="ticker-dot">✦</span></span>
+    <span class="ticker-item">Unlocking <span class="ticker-dot">✦</span></span>
+    <span class="ticker-item">Software Repair <span class="ticker-dot">✦</span></span>
+    <span class="ticker-item">Phone Sales <span class="ticker-dot">✦</span></span>
+    <span class="ticker-item">Accessories <span class="ticker-dot">✦</span></span>
+    <span class="ticker-item">Same Day Service <span class="ticker-dot">✦</span></span>
+    <span class="ticker-item">Screen Repair <span class="ticker-dot">✦</span></span>
+    <span class="ticker-item">Battery Replace <span class="ticker-dot">✦</span></span>
+    <span class="ticker-item">Water Damage Fix <span class="ticker-dot">✦</span></span>
+    <span class="ticker-item">Unlocking <span class="ticker-dot">✦</span></span>
+    <span class="ticker-item">Software Repair <span class="ticker-dot">✦</span></span>
+    <span class="ticker-item">Phone Sales <span class="ticker-dot">✦</span></span>
+    <span class="ticker-item">Accessories <span class="ticker-dot">✦</span></span>
+    <span class="ticker-item">Same Day Service <span class="ticker-dot">✦</span></span>
+  </div>
+</div>
+
+<!-- STATS -->
+<div class="stats">
+  <div class="stat-item">
+    <div class="stat-num">5000<span style="font-size:0.5em">+</span></div>
+    <div class="stat-label">Phones Repaired</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num">10<span style="font-size:0.5em">+</span></div>
+    <div class="stat-label">Years Experience</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num">98<span style="font-size:0.5em">%</span></div>
+    <div class="stat-label">Customer Satisfaction</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num">24<span style="font-size:0.5em">h</span></div>
+    <div class="stat-label">Fast Turnaround</div>
+  </div>
+</div>
+
+<!-- SERVICES -->
+<section class="section" id="services">
+  <p class="section-label">What We Do</p>
+  <h2 class="section-title">OUR<br><span class="outline">REPAIRS</span></h2>
+
+  <div class="services-grid">
+    <div class="service-card">
+      <div class="service-num">01</div>
+      <div class="service-icon">📱</div>
+      <div class="service-name">Screen Repair</div>
+      <div class="service-desc">Cracked, shattered, or unresponsive screens replaced with original quality parts. All brands covered.</div>
+      <div class="service-price">From Rs. 2,500</div>
+    </div>
+    <div class="service-card">
+      <div class="service-num">02</div>
+      <div class="service-icon">🔋</div>
+      <div class="service-name">Battery Replacement</div>
+      <div class="service-desc">Draining fast? We replace your battery in under 30 minutes. OEM & aftermarket options available.</div>
+      <div class="service-price">From Rs. 1,800</div>
+    </div>
+    <div class="service-card">
+      <div class="service-num">03</div>
+      <div class="service-icon">💧</div>
+      <div class="service-name">Water Damage</div>
+      <div class="service-desc">Dropped it in water? Don't panic. Our ultrasonic cleaning process rescues most water-damaged devices.</div>
+      <div class="service-price">From Rs. 3,500</div>
+    </div>
+    <div class="service-card">
+      <div class="service-num">04</div>
+      <div class="service-icon">🔓</div>
+      <div class="service-name">Unlocking</div>
+      <div class="service-desc">Network unlocking for all major carriers. Use your phone anywhere in the world.</div>
+      <div class="service-price">From Rs. 1,500</div>
+    </div>
+    <div class="service-card">
+      <div class="service-num">05</div>
+      <div class="service-icon">⚙️</div>
+      <div class="service-name">Software Repair</div>
+      <div class="service-desc">Boot loops, crashes, data recovery. We fix software issues and restore your data safely.</div>
+      <div class="service-price">From Rs. 2,000</div>
+    </div>
+    <div class="service-card">
+      <div class="service-num">06</div>
+      <div class="service-icon">📷</div>
+      <div class="service-name">Camera & Charging</div>
+      <div class="service-desc">Blurry camera? Won't charge? We replace charging ports and camera modules with precision.</div>
+      <div class="service-price">From Rs. 2,200</div>
+    </div>
+  </div>
+</section>
+
+<!-- PRODUCTS -->
+<section class="section" id="products" style="padding-top:0;">
+  <p class="section-label">Shop</p>
+  <h2 class="section-title">PHONES &<br><span class="outline">ACCESSORIES</span></h2>
+
+  <div class="products-grid">
+    <div class="product-card" style="background:#141414;">
+      <div class="product-bg">🍎</div>
+      <div class="product-info">
+        <div class="product-category">Used & Refurbished</div>
+        <div class="product-name">iPhone Series</div>
+        <div class="product-price">From Rs. 45,000</div>
+      </div>
+    </div>
+    <div class="product-card" style="background:#161616;">
+      <div class="product-bg">📲</div>
+      <div class="product-info">
+        <div class="product-category">New & Used</div>
+        <div class="product-name">Samsung Galaxy</div>
+        <div class="product-price">From Rs. 32,000</div>
+      </div>
+    </div>
+    <div class="product-card" style="background:#131313;">
+      <div class="product-bg">🎧</div>
+      <div class="product-info">
+        <div class="product-category">Accessories</div>
+        <div class="product-name">Earbuds & Cases</div>
+        <div class="product-price">From Rs. 500</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHY US -->
+<section class="section" id="why" style="background: var(--dark);">
+  <p class="section-label">Why NuwanFix</p>
+  <div class="why-grid">
+    <div class="why-left">
+      <div class="big-quote">
+        YOUR PHONE IS<br><span class="accent">OUR PRIORITY.</span><br>ALWAYS.
+      </div>
+      <p>We've been fixing phones in Sri Lanka for over a decade. Every device that comes through our door gets treated with expert hands and honest advice. No hidden costs. No unnecessary parts. Just fast, reliable repairs you can trust.</p>
+    </div>
+    <div class="why-features">
+      <div class="feature-row">
+        <div class="feature-icon">⚡</div>
+        <div>
+          <div class="feature-text-title">Same Day Repair</div>
+          <div class="feature-text-desc">Most repairs done within 1–2 hours while you wait</div>
+        </div>
+      </div>
+      <div class="feature-row">
+        <div class="feature-icon">🛡️</div>
+        <div>
+          <div class="feature-text-title">Warranty Included</div>
+          <div class="feature-text-desc">3-month warranty on all repair parts and labour</div>
+        </div>
+      </div>
+      <div class="feature-row">
+        <div class="feature-icon">💰</div>
+        <div>
+          <div class="feature-text-title">Best Price Guarantee</div>
+          <div class="feature-text-desc">We match any competitor's price — no questions asked</div>
+        </div>
+      </div>
+      <div class="feature-row">
+        <div class="feature-icon">🔬</div>
+        <div>
+          <div class="feature-text-title">Certified Technicians</div>
+          <div class="feature-text-desc">Experienced, trained professionals handle every repair</div>
+        </div>
+      </div>
+      <div class="feature-row">
+        <div class="feature-icon">🇱🇰</div>
+        <div>
+          <div class="feature-text-title">Proudly Sri Lankan</div>
+          <div class="feature-text-desc">Locally owned, community trusted since day one</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="contact-section" id="contact">
+  <div class="contact-bg-num">FIX</div>
+  <p class="section-label">Get In Touch</p>
+  <h2 class="section-title" style="margin-bottom:0;">VISIT<br><span class="outline">THE SHOP</span></h2>
+  <div class="contact-details">
+    <div class="contact-item">
+      <div class="contact-item-label">Call Us</div>
+      <div class="contact-item-value">0XX XXX XXXX</div>
+      <div class="contact-item-sub">Mon–Sat 8am–7pm</div>
+    </div>
+    <div class="contact-item">
+      <div class="contact-item-label">WhatsApp</div>
+      <div class="contact-item-value">0XX XXX XXXX</div>
+      <div class="contact-item-sub">Quick quotes online</div>
+    </div>
+    <div class="contact-item">
+      <div class="contact-item-label">Location</div>
+      <div class="contact-item-value">Sri Lanka</div>
+      <div class="contact-item-sub">Your city address here</div>
+    </div>
+  </div>
+  <div style="margin-top:56px; position:relative; z-index:1;">
+    <a href="#" class="btn-primary">Book a Repair Today</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">Nuwan<span>Fix</span></div>
+  <div class="footer-copy">© 2025 NuwanFix. All rights reserved.</div>
+  <div class="footer-socials">
+    <a href="#">Facebook</a>
+    <a href="#">Instagram</a>
+    <a href="#">WhatsApp</a>
+    <a href="#">TikTok</a>
+  </div>
+</footer>
+
+<script>
+  // Custom cursor
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursorRing');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+
+  document.addEventListener('mousemove', e => {
+    mx = e.clientX; my = e.clientY;
+    cursor.style.left = mx + 'px';
+    cursor.style.top = my + 'px';
+  });
+
+  function animateRing() {
+    rx += (mx - rx) * 0.12;
+    ry += (my - ry) * 0.12;
+    ring.style.left = rx + 'px';
+    ring.style.top = ry + 'px';
+    requestAnimationFrame(animateRing);
+  }
+  animateRing();
+
+  document.querySelectorAll('a, button, .service-card, .product-card, .feature-row').forEach(el => {
+    el.addEventListener('mouseenter', () => {
+      cursor.style.width = '20px';
+      cursor.style.height = '20px';
+      ring.style.width = '56px';
+      ring.style.height = '56px';
+    });
+    el.addEventListener('mouseleave', () => {
+      cursor.style.width = '12px';
+      cursor.style.height = '12px';
+      ring.style.width = '36px';
+      ring.style.height = '36px';
+    });
+  });
+
+  // Scroll reveal
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.style.opacity = '1';
+        e.target.style.transform = 'translateY(0)';
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.service-card, .product-card, .stat-item, .feature-row').forEach(el => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(30px)';
+    el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+    observer.observe(el);
+  });
+</script>
+</body>
+</html>
